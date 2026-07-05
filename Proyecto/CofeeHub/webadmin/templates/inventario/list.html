@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block titulo %}Inventario - Coffee Hub{% endblock %}
+{% block encabezado %}INVENTARIO{% endblock %}
+
+{% block contenido %}
+<div class="flex-between mb-4">
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" id="buscador" placeholder="Buscar ingrediente..." onkeyup="filtrar()">
+  </div>
+  <a class="btn-primary" href="{{ url_for('inventario.nuevo') }}">
+    <i class="fas fa-plus" style="margin-right:8px;"></i> Entrada de Inventario
+  </a>
+</div>
+
+<div class="table-wrap">
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>Ingrediente</th>
+        <th>Existencia</th>
+        <th>Mínimo</th>
+        <th>Unidad</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in ingredientes %}
+      <tr>
+        <td style="font-weight:600;">{{ i.nombre }}</td>
+        <td style="font-family:'DM Mono',monospace;color:{{ '#dc2626' if i.alerta else 'var(--teal)' }};">{{ i.stock_actual }}</td>
+        <td style="font-family:'DM Mono',monospace;color:var(--text-muted);">{{ i.stock_minimo }}</td>
+        <td>{{ i.unidad_medida }}</td>
+        <td>
+          <span class="badge {{ 'badge-danger' if i.alerta else 'badge-success' }}">
+            <i class="fas {{ 'fa-triangle-exclamation' if i.alerta else 'fa-check' }}"></i>
+            {{ 'Bajo' if i.alerta else 'OK' }}
+          </span>
+        </td>
+        <td>
+          <a class="btn-icon" href="{{ url_for('inventario.editar', ingrediente_id=i.id) }}" title="Editar"><i class="fas fa-pen"></i></a>
+          <form style="display:inline" method="post" action="{{ url_for('inventario.eliminar', ingrediente_id=i.id) }}"
+                onsubmit="return confirm('¿Seguro que quieres eliminar este ingrediente?')">
+            <button class="btn-icon danger" title="Eliminar"><i class="fas fa-trash-can"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function filtrar() {
+    const texto = document.getElementById('buscador').value.toLowerCase();
+    document.querySelectorAll('#tabla tbody tr').forEach(fila => {
+      fila.style.display = fila.innerText.toLowerCase().includes(texto) ? '' : 'none';
+    });
+  }
+</script>
+{% endblock %}

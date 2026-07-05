@@ -1,0 +1,417 @@
+{
+  "info": {
+    "name": "Cofeehub API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://127.0.0.1:8010" },
+    { "key": "token_admin", "value": "" },
+    { "key": "token_mesero", "value": "" },
+    { "key": "token_cocina", "value": "" },
+    { "key": "token_cajero", "value": "" },
+    { "key": "pedido_id", "value": "" },
+    { "key": "producto_id", "value": "" },
+    { "key": "mesa_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login admin",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.collectionVariables.set('token_admin', pm.response.json().access_token);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/login",
+            "body": { "mode": "raw", "raw": "{\"correo\":\"admin@coffeehub.com\",\"contrasena\":\"admin123\"}" }
+          }
+        },
+        {
+          "name": "Login mesero",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.collectionVariables.set('token_mesero', pm.response.json().access_token);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/login",
+            "body": { "mode": "raw", "raw": "{\"correo\":\"mesero@coffeehub.com\",\"contrasena\":\"mesero123\"}" }
+          }
+        },
+        {
+          "name": "Login cocina",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.collectionVariables.set('token_cocina', pm.response.json().access_token);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/login",
+            "body": { "mode": "raw", "raw": "{\"correo\":\"cocina@coffeehub.com\",\"contrasena\":\"cocina123\"}" }
+          }
+        },
+        {
+          "name": "Login cajero",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.collectionVariables.set('token_cajero', pm.response.json().access_token);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/login",
+            "body": { "mode": "raw", "raw": "{\"correo\":\"cajero@coffeehub.com\",\"contrasena\":\"cajero123\"}" }
+          }
+        },
+        {
+          "name": "Refresh token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{base_url}}/auth/refresh",
+            "body": { "mode": "raw", "raw": "{\"refresh_token\":\"pega_aqui_el_refresh_token\"}" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_mesero}}" }],
+            "url": "{{base_url}}/auth/logout"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mesero",
+      "item": [
+        {
+          "name": "Ver menu",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_mesero}}" }],
+            "url": "{{base_url}}/menu/productos"
+          }
+        },
+        {
+          "name": "Ver mesas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_mesero}}" }],
+            "url": "{{base_url}}/mesas"
+          }
+        },
+        {
+          "name": "Ver promociones activas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_mesero}}" }],
+            "url": "{{base_url}}/promociones/activas"
+          }
+        },
+        {
+          "name": "Crear pedido",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.collectionVariables.set('pedido_id', pm.response.json().id);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_mesero}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/pedidos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id_mesa\": 1, \"detalles\": [{\"id_producto\": 1, \"cantidad\": 2, \"observaciones\": \"sin azucar\"}]}"
+            }
+          }
+        },
+        {
+          "name": "Ver mis pedidos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_mesero}}" }],
+            "url": "{{base_url}}/pedidos/mios"
+          }
+        },
+        {
+          "name": "Ver detalle de un pedido",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_mesero}}" }],
+            "url": "{{base_url}}/pedidos/{{pedido_id}}"
+          }
+        },
+        {
+          "name": "Cancelar pedido",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_mesero}}" }],
+            "url": "{{base_url}}/pedidos/{{pedido_id}}/cancelar"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cocina",
+      "item": [
+        {
+          "name": "Ver pedidos activos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cocina}}" }],
+            "url": "{{base_url}}/pedidos/activos"
+          }
+        },
+        {
+          "name": "Ver detalle de pedido",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cocina}}" }],
+            "url": "{{base_url}}/pedidos/{{pedido_id}}"
+          }
+        },
+        {
+          "name": "Cambiar estatus a en_preparacion (descuenta inventario)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_cocina}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/pedidos/{{pedido_id}}/estatus",
+            "body": { "mode": "raw", "raw": "{\"estatus\": \"en_preparacion\"}" }
+          }
+        },
+        {
+          "name": "Cambiar estatus a listo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_cocina}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/pedidos/{{pedido_id}}/estatus",
+            "body": { "mode": "raw", "raw": "{\"estatus\": \"listo\"}" }
+          }
+        },
+        {
+          "name": "Ver inventario",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cocina}}" }],
+            "url": "{{base_url}}/inventario"
+          }
+        },
+        {
+          "name": "Ver alertas de inventario",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cocina}}" }],
+            "url": "{{base_url}}/inventario/alertas"
+          }
+        },
+        {
+          "name": "Actualizar stock de un ingrediente",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_cocina}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/inventario/1",
+            "body": { "mode": "raw", "raw": "{\"stock_actual\": 5000}" }
+          }
+        },
+        {
+          "name": "Crear producto de menu",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_cocina}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/menu/productos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Mocha\", \"descripcion\": \"Cafe con chocolate\", \"precio\": 55, \"id_categoria_prod\": 1, \"ingredientes\": []}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Caja",
+      "item": [
+        {
+          "name": "Ver pedidos listos para cobro",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cajero}}" }],
+            "url": "{{base_url}}/pedidos/listos"
+          }
+        },
+        {
+          "name": "Ver detalle del pedido a cobrar",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cajero}}" }],
+            "url": "{{base_url}}/pedidos/{{pedido_id}}"
+          }
+        },
+        {
+          "name": "Ver metodos de pago",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cajero}}" }],
+            "url": "{{base_url}}/pagos/metodos"
+          }
+        },
+        {
+          "name": "Registrar pago (genera ticket)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_cajero}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/pagos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"id_pedido\": {{pedido_id}}, \"id_metodo\": 1, \"monto_recibido\": 200}"
+            }
+          }
+        },
+        {
+          "name": "Ver ticket de un pedido",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cajero}}" }],
+            "url": "{{base_url}}/pagos/{{pedido_id}}"
+          }
+        },
+        {
+          "name": "Ver categorias de gasto",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cajero}}" }],
+            "url": "{{base_url}}/gastos/categorias"
+          }
+        },
+        {
+          "name": "Registrar gasto operativo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_cajero}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/gastos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"descripcion\": \"Compra de vasos desechables\", \"monto\": 350, \"id_categoria_gast\": 1}"
+            }
+          }
+        },
+        {
+          "name": "Ver gastos registrados",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_cajero}}" }],
+            "url": "{{base_url}}/gastos"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Listar usuarios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": "{{base_url}}/usuarios"
+          }
+        },
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/usuarios",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"Pedro\", \"apellido_pat\": \"Ramirez\", \"apellido_mat\": \"Soto\", \"correo\": \"pedro@coffeehub.com\", \"contrasena\": \"pedro123\", \"id_rol\": 2}"
+            }
+          }
+        },
+        {
+          "name": "Editar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/usuarios/5",
+            "body": { "mode": "raw", "raw": "{\"estatus\": false}" }
+          }
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": "{{base_url}}/usuarios/5"
+          }
+        },
+        {
+          "name": "Dashboard general",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": "{{base_url}}/reportes/dashboard"
+          }
+        },
+        {
+          "name": "Reporte de ventas por fecha",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": "{{base_url}}/reportes/ventas?fecha_inicio=2026-06-01&fecha_fin=2026-07-04"
+          }
+        },
+        {
+          "name": "Reporte de gastos por fecha",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_admin}}" }],
+            "url": "{{base_url}}/reportes/gastos?fecha_inicio=2026-06-01&fecha_fin=2026-07-04"
+          }
+        },
+        {
+          "name": "Crear promocion",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_admin}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{base_url}}/promociones",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"nombre\": \"2x1 viernes\", \"descripcion\": \"2x1 en frappe\", \"descuento\": 50, \"fecha_inicio\": \"2026-07-01\", \"fecha_fin\": \"2026-08-01\", \"monto_minimo\": 0}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

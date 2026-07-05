@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}Gastos - Coffee Hub{% endblock %}
+{% block encabezado %}GASTOS{% endblock %}
+
+{% block contenido %}
+<div class="card mb-4" style="max-width:560px;">
+  <span class="card-title">Registrar nuevo gasto</span>
+  <form method="post" action="{{ url_for('gastos.nuevo') }}">
+    <div class="form-group">
+      <label>Descripción</label>
+      <input type="text" name="descripcion" required>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Monto</label>
+        <input type="number" step="0.01" name="monto" required>
+      </div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <select name="id_categoria_gast">
+          {% for c in categorias %}
+          <option value="{{ c.id }}">{{ c.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <button class="btn-primary" type="submit">Registrar gasto</button>
+  </form>
+</div>
+
+<div class="card">
+  <span class="card-title">Historial de gastos</span>
+  <div class="table-wrap" style="box-shadow:none;">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Descripción</th>
+          <th>Categoría</th>
+          <th>Monto</th>
+          <th>Registrado por</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in gastos %}
+        <tr>
+          <td>{{ g.fecha_pago }}</td>
+          <td>{{ g.descripcion }}</td>
+          <td><span class="badge badge-neutral">{{ g.categoria.nombre }}</span></td>
+          <td style="font-family:'DM Mono',monospace;">${{ '%.2f'|format(g.monto|float) }}</td>
+          <td>{{ g.nombre_usuario }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

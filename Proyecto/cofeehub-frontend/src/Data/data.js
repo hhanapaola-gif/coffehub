@@ -1,0 +1,135 @@
+export const PRODUCTS = [
+  {
+    id: 1,
+    name: 'Cappuccino',
+    price: 45,
+    qty: 0,
+    img: require('../../assets/capuchino.png'),
+    category: 'Bebidas',
+  },
+  {
+    id: 2,
+    name: 'Latte Vainilla',
+    price: 52,
+    qty: 0,
+    img: require('../../assets/latteVai.png'),
+    category: 'Bebidas',
+  },
+  {
+    id: 3,
+    name: 'Espresso Doble',
+    price: 38,
+    qty: 0,
+    img: require('../../assets/espressoDob.png'),
+    category: 'Bebidas',
+  },
+  {
+    id: 4,
+    name: 'Croissant de Mantequilla',
+    price: 35,
+    qty: 0,
+    img: require('../../assets/croissMant.png'),
+    category: 'Alimentos',
+  },
+  {
+    id: 5,
+    name: 'Sándwich Club',
+    price: 68,
+    qty: 0,
+    img: require('../../assets/sandClub.png'),
+    category: 'Alimentos',
+  },
+  {
+    id: 6,
+    name: 'Tostada Aguacate',
+    price: 72,
+    qty: 0,
+    img: require('../../assets/tostAgua.png'),
+    category: 'Alimentos',
+  },
+  {
+    id: 7,
+    name: 'Pastel de Chocolate',
+    price: 55,
+    qty: 0,
+    img: require('../../assets/pastChoco.png'),
+    category: 'Postres',
+  },
+  {
+    id: 8,
+    name: 'Cheesecake Fresa',
+    price: 58,
+    qty: 0,
+    img: require('../../assets/chesFres.png'),
+    category: 'Postres',
+  },
+];
+
+export const PROMOTIONS = [
+  {
+    id: 1,
+    title: 'Happy Hour Café',
+    desc: '2x1 en todos los espressos de 14:00 a 16:00 hrs.',
+    discount: '2×1',
+    img: require('../../assets/promCafe.png'),
+  },
+  {
+    id: 2,
+    title: 'Combo Desayuno',
+    desc: 'Café + Croissant por solo $65. Ahorra $30 todos los días.',
+    discount: '-31%',
+    img: require('../../assets/promDesa.png'),
+  },
+  {
+    id: 3,
+    title: 'Postre del Día',
+    desc: 'Pastel horneado fresco con bebida caliente a precio especial.',
+    discount: '-20%',
+    img: require('../../assets/promPast.png'),
+  },
+];
+
+export const KITCHEN_ORDERS = [
+  {
+    id: '001',
+    table: 'Mesa 3',
+    time: '10:32',
+    status: 'pending',
+    items: ['Cappuccino x2', 'Croissant x1', 'Latte Vainilla x1'],
+    notes: 'Sin azúcar en los lattes',
+  },
+  {
+    id: '002',
+    table: 'Mesa 7',
+    time: '10:38',
+    status: 'preparing',
+    items: ['Espresso Doble x1', 'Sándwich Club x2'],
+    notes: '',
+  },
+  {
+    id: '003',
+    table: 'Mesa 1',
+    time: '10:45',
+    status: 'ready',
+    items: ['Pastel de Chocolate x1', 'Latte Vainilla x2'],
+    notes: 'Leche deslactosada',
+  },
+  {
+    id: '004',
+    table: 'Mesa 5',
+    time: '10:51',
+    status: 'pending',
+    items: ['Tostada Aguacate x2', 'Cappuccino x3'],
+    notes: 'Extra café en uno',
+  },
+];
+
+export const INGREDIENTS = [
+  { name: 'Café Espresso', qty: '0.8 kg', alert: true },
+  { name: 'Leche Entera', qty: '2.5 L', alert: true },
+  { name: 'Leche Deslactosada', qty: '4.0 L', alert: false },
+  { name: 'Azúcar', qty: '1.2 kg', alert: false },
+  { name: 'Harina', qty: '0.5 kg', alert: true },
+  { name: 'Mantequilla', qty: '3.0 kg', alert: false },
+  { name: 'Chocolate', qty: '1.8 kg', alert: false },
+];

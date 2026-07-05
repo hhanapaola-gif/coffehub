@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}Menú - Coffee Hub{% endblock %}
+{% block encabezado %}MENÚ{% endblock %}
+
+{% block contenido %}
+<div class="flex-between mb-4">
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" id="buscador" placeholder="Buscar producto..." onkeyup="filtrar()">
+  </div>
+  <a class="btn-primary" href="{{ url_for('menu.nuevo') }}">
+    <i class="fas fa-plus" style="margin-right:8px;"></i> Nuevo producto
+  </a>
+</div>
+
+<div class="table-wrap">
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Categoría</th>
+        <th>Precio</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in productos %}
+      <tr>
+        <td style="font-weight:600;">{{ p.nombre }}</td>
+        <td>{{ p.categoria.nombre }}</td>
+        <td style="font-family:'DM Mono',monospace;">${{ '%.2f'|format(p.precio|float) }}</td>
+        <td><span class="badge {{ 'badge-success' if p.estatus else 'badge-danger' }}">{{ 'Activo' if p.estatus else 'Inactivo' }}</span></td>
+        <td>
+          <a class="btn-icon" href="{{ url_for('menu.editar', producto_id=p.id) }}" title="Editar"><i class="fas fa-pen"></i></a>
+          <form style="display:inline" method="post" action="{{ url_for('menu.eliminar', producto_id=p.id) }}"
+                onsubmit="return confirm('¿Seguro que quieres eliminar este producto?')">
+            <button class="btn-icon danger" title="Eliminar"><i class="fas fa-trash-can"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="result-count">Mostrando {{ productos|length }} producto{{ 's' if productos|length != 1 else '' }}</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function filtrar() {
+    const texto = document.getElementById('buscador').value.toLowerCase();
+    document.querySelectorAll('#tabla tbody tr').forEach(fila => {
+      fila.style.display = fila.innerText.toLowerCase().includes(texto) ? '' : 'none';
+    });
+  }
+</script>
+{% endblock %}

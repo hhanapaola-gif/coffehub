@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Coffee Hub{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="icon-box"><i class="fas fa-mug-saucer"></i></div>
+      <div class="brand">
+        <div class="top">COFFEE</div>
+        <div class="bottom">HUB</div>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-label">Menú Principal</div>
+      <a href="{{ url_for('dashboard.index') }}" class="{{ 'active' if request.endpoint == 'dashboard.index' else '' }}"><i class="fas fa-chart-pie"></i> Dashboard</a>
+      <a href="{{ url_for('usuarios.listar') }}" class="{{ 'active' if request.blueprint == 'usuarios' else '' }}"><i class="fas fa-users"></i> Usuarios</a>
+      <a href="{{ url_for('menu.listar') }}" class="{{ 'active' if request.blueprint == 'menu' else '' }}"><i class="fas fa-utensils"></i> Menú</a>
+      <a href="{{ url_for('inventario.listar') }}" class="{{ 'active' if request.blueprint == 'inventario' else '' }}"><i class="fas fa-boxes"></i> Inventario</a>
+      <a href="{{ url_for('ventas.index') }}" class="{{ 'active' if request.blueprint == 'ventas' else '' }}"><i class="fas fa-chart-line"></i> Ventas</a>
+      <a href="{{ url_for('estadisticas.index') }}" class="{{ 'active' if request.blueprint == 'estadisticas' else '' }}"><i class="fas fa-chart-pie"></i> Estadísticas</a>
+      <a href="{{ url_for('reportes.index') }}" class="{{ 'active' if request.blueprint == 'reportes' else '' }}"><i class="fas fa-file-alt"></i> Reportes</a>
+      <a href="{{ url_for('promociones.listar') }}" class="{{ 'active' if request.blueprint == 'promociones' else '' }}"><i class="fas fa-tags"></i> Promociones</a>
+      <a href="{{ url_for('gastos.listar') }}" class="{{ 'active' if request.blueprint == 'gastos' else '' }}"><i class="fas fa-receipt"></i> Gastos</a>
+    </nav>
+    <div class="logout">
+      <a href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>{% block encabezado %}{% endblock %}</h1>
+      <div class="profile">
+        <div class="avatar">{{ session.get('nombre', 'A')[0] }}</div>
+        <div class="info">
+          <div class="name">{{ session.get('nombre', 'Administrador') }}</div>
+          <div class="role">Administrador</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="screen-container">
+      {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+        <div class="mensajes">
+          {% for categoria, texto in mensajes %}
+            <div class="mensaje {{ categoria }}">{{ texto }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block contenido %}{% endblock %}
+    </div>
+  </div>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block titulo %}Ventas - Coffee Hub{% endblock %}
+{% block encabezado %}VENTAS{% endblock %}
+
+{% block contenido %}
+<div class="card mb-4">
+  <form method="get" class="flex-between">
+    <div style="display:flex;gap:16px;align-items:end;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Desde</label>
+        <input type="date" name="fecha_inicio" value="{{ fecha_inicio }}">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Hasta</label>
+        <input type="date" name="fecha_fin" value="{{ fecha_fin }}">
+      </div>
+      <button class="btn-primary" type="submit">Filtrar</button>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <a class="btn-outline" href="{{ url_for('reportes.exportar', tipo='ventas', formato='pdf', fecha_inicio=fecha_inicio, fecha_fin=fecha_fin) }}"><i class="fas fa-download" style="margin-right:8px;"></i>Exportar PDF</a>
+      <a class="btn-outline" href="{{ url_for('reportes.exportar', tipo='ventas', formato='xlsx', fecha_inicio=fecha_inicio, fecha_fin=fecha_fin) }}"><i class="fas fa-download" style="margin-right:8px;"></i>Exportar XLSX</a>
+    </div>
+  </form>
+</div>
+
+<div class="card mb-4" style="padding:16px 24px;display:inline-block;">
+  <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);">Total en el periodo</div>
+  <div style="font-size:32px;font-weight:700;color:var(--teal);">${{ '%.2f'|format(datos.total|float) }}</div>
+</div>
+
+<div class="chart-row">
+  <div class="card">
+    <span class="card-title">Ventas por día</span>
+    <div class="chart-container">
+      <canvas id="graficaVentas"></canvas>
+    </div>
+  </div>
+  <div class="card">
+    <span class="card-title">Productos más vendidos</span>
+    <div class="chart-container-sm">
+      <canvas id="graficaProductos"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+  const fechas = {{ datos.por_dia | map(attribute='fecha') | list | tojson }};
+  const totales = {{ datos.por_dia | map(attribute='total') | list | tojson }};
+
+  new Chart(document.getElementById('graficaVentas'), {
+    type: 'bar',
+    data: { labels: fechas, datasets: [{ label: 'Ventas', data: totales, backgroundColor: '#063A43', borderRadius: 6 }] },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  const productos = {{ datos.productos_mas_vendidos | map(attribute='producto') | list | tojson }};
+  const cantidades = {{ datos.productos_mas_vendidos | map(attribute='cantidad') | list | tojson }};
+
+  new Chart(document.getElementById('graficaProductos'), {
+    type: 'doughnut',
+    data: {
+      labels: productos,
+      datasets: [{ data: cantidades, backgroundColor: ['#063A43', '#D9A441', '#0A5966', '#E8B86D', '#2E8B9A'], borderWidth: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '50%' }
+  });
+</script>
+{% endblock %}

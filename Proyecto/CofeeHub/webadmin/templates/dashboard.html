@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block titulo %}Dashboard - Coffee Hub{% endblock %}
+{% block encabezado %}DASHBOARD{% endblock %}
+
+{% block contenido %}
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="top"><span class="label">Ventas del día</span><div class="icon"><i class="fas fa-dollar-sign"></i></div></div>
+    <div class="value">${{ '%.2f'|format(datos.ventas_hoy|float) }}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="top"><span class="label">Pedidos activos</span><div class="icon"><i class="fas fa-shopping-bag"></i></div></div>
+    <div class="value">{{ datos.pedidos_activos }}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="top"><span class="label">Ganancias del día</span><div class="icon"><i class="fas fa-arrow-trend-up"></i></div></div>
+    <div class="value">${{ '%.2f'|format(datos.ganancias_hoy|float) }}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="top"><span class="label">Gastos del día</span><div class="icon"><i class="fas fa-receipt"></i></div></div>
+    <div class="value">${{ '%.2f'|format(datos.gastos_hoy|float) }}</div>
+  </div>
+</div>
+
+<div class="chart-row">
+  <div class="card">
+    <span class="card-title">Ventas últimos 7 días</span>
+    <div class="chart-container">
+      <canvas id="graficaVentas"></canvas>
+    </div>
+  </div>
+  <div class="card">
+    <span class="card-title">Pedidos por estado</span>
+    <div class="chart-container-sm">
+      <canvas id="graficaEstados"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <span class="card-title">Panel de alertas</span>
+    {% if datos.ingredientes_con_alerta > 0 %}
+    <div style="display:flex;gap:12px;align-items:flex-start;background:#FFF8EC;border-radius:12px;padding:12px 16px;">
+      <i class="fas fa-triangle-exclamation" style="color:var(--gold);font-size:15px;margin-top:2px;"></i>
+      <span style="font-size:13px;color:var(--teal);">
+        {{ datos.ingredientes_con_alerta }} ingrediente{{ 's' if datos.ingredientes_con_alerta != 1 else '' }} con stock bajo —
+        <a href="{{ url_for('inventario.listar') }}" style="text-decoration:underline;">ver detalles</a>
+      </span>
+    </div>
+    {% else %}
+    <div style="display:flex;gap:12px;align-items:flex-start;background:#F0FBF4;border-radius:12px;padding:12px 16px;">
+      <i class="fas fa-circle-check" style="color:var(--success);font-size:15px;margin-top:2px;"></i>
+      <span style="font-size:13px;color:var(--teal);">Todo el inventario está por encima del mínimo</span>
+    </div>
+    {% endif %}
+  </div>
+  <div class="card">
+    <span class="card-title">Pedidos listos por cobrar</span>
+    <div class="flex-between" style="padding:12px 16px;border:1px solid var(--border-light);border-radius:12px;">
+      <span style="font-size:13px;color:var(--teal);">Esperando pago en caja</span>
+      <strong style="font-size:18px;color:var(--gold);">{{ datos.pedidos_listos_para_cobro }}</strong>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+  const fechas = {{ datos.ventas_ultimos_7_dias | map(attribute='fecha') | list | tojson }};
+  const totales = {{ datos.ventas_ultimos_7_dias | map(attribute='total') | list | tojson }};
+
+  new Chart(document.getElementById('graficaVentas'), {
+    type: 'line',
+    data: {
+      labels: fechas,
+      datasets: [{ label: 'Ventas', data: totales, borderColor: '#063A43', backgroundColor: 'rgba(6,58,67,0.05)', tension: 0.3, pointBackgroundColor: '#063A43', pointRadius: 4, fill: true }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  const estados = {{ datos.pedidos_por_estado | map(attribute='estatus') | list | tojson }};
+  const cantidades = {{ datos.pedidos_por_estado | map(attribute='cantidad') | list | tojson }};
+
+  new Chart(document.getElementById('graficaEstados'), {
+    type: 'doughnut',
+    data: {
+      labels: estados,
+      datasets: [{ data: cantidades, backgroundColor: ['#063A43', '#D9A441', '#0A5966', '#E8B86D', '#2E8B9A'], borderWidth: 0 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '60%' }
+  });
+</script>
+{% endblock %}

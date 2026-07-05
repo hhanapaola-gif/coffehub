@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block titulo %}{{ 'Editar' if producto else 'Nuevo' }} producto - Coffee Hub{% endblock %}
+{% block encabezado %}{{ 'EDITAR PRODUCTO' if producto else 'NUEVO PRODUCTO' }}{% endblock %}
+
+{% block contenido %}
+<div class="card" style="max-width:600px;">
+  <form method="post">
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" name="nombre" value="{{ producto.nombre if producto else '' }}" required>
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea name="descripcion" rows="2">{{ producto.descripcion if producto else '' }}</textarea>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Precio</label>
+        <input type="number" step="0.01" name="precio" value="{{ producto.precio if producto else '' }}" required>
+      </div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <select name="id_categoria_prod">
+          {% for c in categorias %}
+          <option value="{{ c.id }}" {{ 'selected' if producto and producto.categoria.id == c.id }}>{{ c.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-check"><input type="checkbox" name="estatus" {{ 'checked' if not producto or producto.estatus }}> Disponible</label>
+    </div>
+
+    <div class="form-group">
+      <label>Ingredientes</label>
+      <div id="filas-ingredientes">
+        {% if producto and producto.ingredientes %}
+          {% for ing in producto.ingredientes %}
+          <div class="grid-2" style="margin-bottom:8px">
+            <select name="id_ingrediente">
+              {% for i in ingredientes %}
+              <option value="{{ i.id }}" {{ 'selected' if i.id == ing.id_ingrediente }}>{{ i.nombre }} ({{ i.unidad_medida }})</option>
+              {% endfor %}
+            </select>
+            <input type="number" step="0.01" name="cantidad_usada" value="{{ ing.cantidad_usada }}" placeholder="cantidad usada">
+          </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      <button type="button" class="btn-secondary" onclick="agregarFila()">+ Agregar ingrediente</button>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:8px;">
+      <button type="submit" class="btn-primary" style="flex:1;justify-content:center;">Guardar producto</button>
+      <a class="btn-secondary" style="flex:1;justify-content:center;" href="{{ url_for('menu.listar') }}">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<template id="plantilla-fila">
+  <div class="grid-2" style="margin-bottom:8px">
+    <select name="id_ingrediente">
+      {% for i in ingredientes %}
+      <option value="{{ i.id }}">{{ i.nombre }} ({{ i.unidad_medida }})</option>
+      {% endfor %}
+    </select>
+    <input type="number" step="0.01" name="cantidad_usada" placeholder="cantidad usada">
+  </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function agregarFila() {
+    const plantilla = document.getElementById('plantilla-fila').content.cloneNode(true);
+    document.getElementById('filas-ingredientes').appendChild(plantilla);
+  }
+</script>
+{% endblock %}

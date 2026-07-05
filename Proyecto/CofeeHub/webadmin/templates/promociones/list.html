@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}Promociones - Coffee Hub{% endblock %}
+{% block encabezado %}PROMOCIONES{% endblock %}
+
+{% block contenido %}
+<div class="flex-between mb-4">
+  <span></span>
+  <a class="btn-primary" href="{{ url_for('promociones.nueva') }}">
+    <i class="fas fa-plus" style="margin-right:8px;"></i> Nueva promoción
+  </a>
+</div>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Descuento</th>
+        <th>Vigencia</th>
+        <th>Compra mínima</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in promociones %}
+      <tr>
+        <td style="font-weight:600;">{{ p.nombre }}</td>
+        <td style="font-family:'DM Mono',monospace;">{{ p.descuento }}%</td>
+        <td>{{ p.fecha_inicio }} al {{ p.fecha_fin }}</td>
+        <td style="font-family:'DM Mono',monospace;">${{ p.monto_minimo }}</td>
+        <td><span class="badge {{ 'badge-success' if p.estatus else 'badge-danger' }}">{{ 'Activa' if p.estatus else 'Inactiva' }}</span></td>
+        <td>
+          <a class="btn-icon" href="{{ url_for('promociones.editar', promocion_id=p.id) }}" title="Editar"><i class="fas fa-pen"></i></a>
+          <form style="display:inline" method="post" action="{{ url_for('promociones.eliminar', promocion_id=p.id) }}"
+                onsubmit="return confirm('¿Seguro que quieres eliminar esta promoción?')">
+            <button class="btn-icon danger" title="Eliminar"><i class="fas fa-trash-can"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
